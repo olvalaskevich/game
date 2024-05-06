@@ -3,9 +3,14 @@ class Game{
             gridSize:{
                 x:4,
                 y:4
-            }
+            },
+            googleJumpInterval:2000
         };
         #status='pending';
+        #score={
+            player1:0,
+            player2:0
+        }
         #player1;
         #player2;
         #google;
@@ -38,11 +43,19 @@ class Game{
     get status(){
         return this.#status
     }
+
+    get score(){
+            return this.#score
+    }
     async start(){
         if (this.#status==='pending'){
             this.#createPlayers();
-            this.#createGoogle()
-            this.#status='in-progress'
+            this.#createGoogle();
+            this.#status='in-progress';
+
+            setInterval(()=>{
+                this.#google.position=this.#getRandomPosition([this.#player1.position, this.#player2.position]);
+            }, this.#settings.googleJumpInterval)
         }
     }
     get players(){
@@ -73,6 +86,12 @@ class Position{
     constructor(x,y){
         this.x=x;
         this.y=y
+    }
+    clone(){
+        return new Position(this.x, this.y)
+    }
+    equal(otherPosition){
+        return otherPosition.x===this.x && otherPosition.y===this.y
     }
 }
 class Unit{
