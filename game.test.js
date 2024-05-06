@@ -70,4 +70,67 @@ describe('tests for game', ()=>{
         }
 
     })
+    it('check google position after jump', async ()=>{
+
+            const game=new Game()
+            game.settings={
+                gridSize:{
+                    x:1,
+                    y:4
+                },
+                googleJumpInterval:1000
+
+            }
+            await game.start();
+
+            let prevGooglePosition=game.google.position.clone()
+
+            await sleep(1500)
+
+            expect(game.google.position.equal(prevGooglePosition)).toBe(false)
+
+
+
+
+    })
+    it('catch google by player', async ()=>{
+
+        const game=new Game()
+        game.settings={
+            gridSize:{
+                x:3,
+                y:1
+            }
+
+        }
+        await game.start();
+        let prevGooglePosition=game.google.position.clone()
+        const deltaForPlayer1 = game.google.position.x-game.players[0].position.x
+        if (Math.abs(deltaForPlayer1)===2){
+        const deltaForPlayer2=game.google.position.x-game.players[1].position.x
+            if(delta>0){
+                game.moveRigtht()
+            } else {
+                game.moveLeft()
+            }
+            expect(game.score.player2).toBe(1)
+            expect(game.score.player1).toBe(0)
+
+        } else {
+            if(delta>0){
+                game.moveRigtht()
+            } else {
+                game.moveLeft()
+            }
+            expect(game.score.player1).toBe(1)
+            expect(game.score.player2).toBe(0)
+        }
+        expect(game.google.position.equal(prevGooglePosition)).toBe(false)
+
+
+    })
 })
+
+async function sleep(t){
+    return new Promise((res)=>setTimeout(res,t))
+}
