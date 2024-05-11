@@ -1,8 +1,15 @@
 const {Game} = require("./game");
 
 describe('tests for game', ()=>{
+    let game;
+    beforeEach(()=>{
+        game=new Game()
+    })
+    afterEach(async()=>{
+        await game.stop()
+    })
     it('settings test', ()=>{
-        const game=new Game()
+
         game.settings={
             gridSize:{
                 x:4,
@@ -15,7 +22,7 @@ describe('tests for game', ()=>{
         expect(setting.gridSize.y).toBe(4)
     })
     it('start game test', async ()=>{
-        const game=new Game()
+
         game.settings={
             gridSize:{
                 x:4,
@@ -32,7 +39,7 @@ describe('tests for game', ()=>{
     })
     it('check player init position', async ()=>{
         for (i=0; i<10; i++){
-            const game=new Game()
+            game=new Game()
             game.settings={
                 gridSize:{
                     x:1,
@@ -48,12 +55,13 @@ describe('tests for game', ()=>{
 
             expect(game.players[0].position.x!==game.players[1].position.x ||
             game.players[0].position.y!==game.players[1].position.y).toBe(true)
+            game.stop()
         }
 
     })
     it('check google init position', async ()=>{
         for (i=0; i<10; i++){
-            const game=new Game()
+            game=new Game()
             game.settings={
                 gridSize:{
                     x:1,
@@ -66,12 +74,13 @@ describe('tests for game', ()=>{
 
             expect((game.google.position.x!==game.players[0].position.x || game.google.position.y!==game.players[0].position.y) &&
                 (game.google.position.x!==game.players[1].position.x || game.google.position.y!==game.players[1].position.y)).toBe(true)
+       game.stop()
         }
 
     })
     it('check google position after jump', async ()=>{
 
-            const game=new Game()
+
             game.settings={
                 gridSize:{
                     x:1,
@@ -92,7 +101,7 @@ describe('tests for game', ()=>{
     })
     it('catch google by player for rows', async ()=>{
 
-        const game=new Game()
+
         game.settings={
             gridSize:{
                 x:3,
@@ -128,7 +137,6 @@ describe('tests for game', ()=>{
     })
     it('catch google by player for columns', async ()=>{
 
-        const game=new Game()
         game.settings={
             gridSize:{
                 x:1,
