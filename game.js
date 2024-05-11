@@ -74,6 +74,70 @@ class Game{
     #createGoogle(){
             this.#google=new Google(this.#getRandomPosition([this.#player1.position,this.#player2.position]))
     }
+
+    #canMoveBorder(player, delta) {
+        const newPosition = player.position.clone();
+        if (delta.x) newPosition.x += delta.x;
+        if (delta.y) newPosition.y += delta.y;
+        if (newPosition.x < 0 || newPosition.x >= this.#settings.gridSize.x) return false;
+        if (newPosition.y < 0 || newPosition.y >= this.#settings.gridSize.y) return false;
+
+        return true;
+    }
+    #canMoveOtherPlayer(player, otherPlayer, delta){
+        const newPosition1 = player.position.clone();
+        const newPosition2 = otherPlayer.position.clone();
+        if (delta.x) newPosition2.x += delta.x;
+        if (delta.y) newPosition2.y += delta.y;
+        if (newPosition2.x < 0 || newPosition2.x >= this.#settings.gridSize.x) return false;
+        if (newPosition2.y < 0 || newPosition2.y >= this.#settings.gridSize.y) return false;
+
+        return true;
+    }
+    #checkGoogleCatching(){
+
+    }
+    #movePlayer(player, otherPlayer, delta){
+            const canMove=this.#canMoveBorder(player, delta);
+            if (!canMove) return;
+            const canMoveOtherPlayer=this.#canMoveOtherPlayer(player, otherPlayer, delta);
+        if (!canMoveOtherPlayer) return;
+        if (delta.x) player.position.x+=delta.x;
+        if (delta.y) player.position.y+=delta.y;
+        this.#checkGoogleCatching(player);
+    }
+    movePlayer1Right(){
+        let delta={x:1};
+        this.#movePlayer(this.#player1, this.#player2,delta)
+    }
+    movePlayer1Left(){
+        let delta={x:-1};
+        this.#movePlayer(this.#player1, this.#player2,delta)
+    }
+    movePlayer2Right(){
+        let delta={x:1};
+        this.#movePlayer(this.#player2, this.#player1,delta)
+    }
+    movePlayer2Left(){
+        let delta={x:-1};
+        this.#movePlayer(this.#player2, this.#player1,delta)
+    }
+    movePlayer1Up(){
+        let delta={y:-1};
+        this.#movePlayer(this.#player1, this.#player2,delta)
+    }
+    movePlayer1Down(){
+        let delta={y:1};
+        this.#movePlayer(this.#player1, this.#player2,delta)
+    }
+    movePlayer2Up(){
+        let delta={y:-1};
+        this.#movePlayer(this.#player2, this.#player1,delta)
+    }
+    movePlayer2Down(){
+        let delta={y:1};
+        this.#movePlayer(this.#player2, this.#player1,delta)
+    }
 }
 
 class NumberUtil{
