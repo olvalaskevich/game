@@ -108,22 +108,22 @@ describe('tests for game', ()=>{
         const deltaForPlayer1 = game.google.position.x-game.players[0].position.x
         if (Math.abs(deltaForPlayer1)===2){
         const deltaForPlayer2=game.google.position.x-game.players[1].position.x
-            if(delta>0){
-                game.moveRigtht()
+            if(deltaForPlayer2>0){
+                game.movePlayer2Right()
             } else {
-                game.moveLeft()
+                game.movePlayer2Left()
             }
-            expect(game.score.player2).toBe(1)
-            expect(game.score.player1).toBe(0)
+            expect(game.score[2].points).toBe(1)
+            expect(game.score[1].points).toBe(0)
 
         } else {
-            if(delta>0){
-                game.moveRigtht()
+            if(deltaForPlayer1>0){
+                game.movePlayer1Right()
             } else {
-                game.moveLeft()
+                game.movePlayer1Left()
             }
-            expect(game.score.player1).toBe(1)
-            expect(game.score.player2).toBe(0)
+            expect(game.score[1].points).toBe(1)
+            expect(game.score[2].points).toBe(0)
         }
         expect(game.google.position.equal(prevGooglePosition)).toBe(false)
 
