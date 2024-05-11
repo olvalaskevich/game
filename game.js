@@ -8,8 +8,8 @@ class Game{
         };
         #status='pending';
         #score={
-            player1:0,
-            player2:0
+            1:{points:0},
+            2:{points:0}
         }
         #player1;
         #player2;
@@ -54,9 +54,12 @@ class Game{
             this.#status='in-progress';
 
             setInterval(()=>{
-                this.#google.position=this.#getRandomPosition([this.#player1.position, this.#player2.position]);
+                this.#moveGoogleForRandomPosition();
             }, this.#settings.googleJumpInterval)
         }
+    }
+    #moveGoogleForRandomPosition(){
+        this.#google.position=this.#getRandomPosition([this.#player1.position, this.#player2.position])
     }
     get players(){
             return [this.#player1, this.#player2]
@@ -67,9 +70,9 @@ class Game{
 
     #createPlayers(){
         const player1Position = new Position(NumberUtil.getRandomNumber(0, this.#settings.gridSize.x - 1), NumberUtil.getRandomNumber(0, this.#settings.gridSize.y - 1));
-        this.#player1 = new Player(player1Position);
+        this.#player1 = new Player(player1Position,1);
         const player2Position=this.#getRandomPosition([player1Position])
-        this.#player2 = new Player(player2Position)
+        this.#player2 = new Player(player2Position,2)
     }
     #createGoogle(){
             this.#google=new Google(this.#getRandomPosition([this.#player1.position,this.#player2.position]))
@@ -85,17 +88,18 @@ class Game{
         return true;
     }
     #canMoveOtherPlayer(player, otherPlayer, delta){
-        const newPosition1 = player.position.clone();
-        const newPosition2 = otherPlayer.position.clone();
-        if (delta.x) newPosition2.x += delta.x;
-        if (delta.y) newPosition2.y += delta.y;
-        if (newPosition2.x < 0 || newPosition2.x >= this.#settings.gridSize.x) return false;
-        if (newPosition2.y < 0 || newPosition2.y >= this.#settings.gridSize.y) return false;
+        const newPosition = player.position.clone();
+        if (delta.x) newPosition.x += delta.x;
+        if (delta.y) newPosition.y += delta.y;
+        return !otherPlayer.position.equal(newPosition);
 
-        return true;
     }
-    #checkGoogleCatching(){
 
+    #checkGoogleCatching(player) {
+        if (player.position.equal(this.#google.position)) {
+            this.#score[player.number].points++
+            this.#moveGoogleForRandomPosition()
+        }
     }
     #movePlayer(player, otherPlayer, delta){
             const canMove=this.#canMoveBorder(player, delta);
@@ -164,8 +168,9 @@ class Unit{
     }
 }
 class Player extends Unit {
-    constructor(position) {
+    constructor(position, number) {
         super(position)
+        this.number=number
     }
 }
 class Google extends Unit {
