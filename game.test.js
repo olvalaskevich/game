@@ -30,7 +30,6 @@ describe('tests for game', ()=>{
 
         expect(game.status).toBe('in-progress')
     })
-
     it('check player init position', async ()=>{
         for (i=0; i<10; i++){
             const game=new Game()
@@ -90,10 +89,8 @@ describe('tests for game', ()=>{
             expect(game.google.position.equal(prevGooglePosition)).toBe(false)
 
 
-
-
     })
-    it('catch google by player', async ()=>{
+    it('catch google by player for rows', async ()=>{
 
         const game=new Game()
         game.settings={
@@ -121,6 +118,42 @@ describe('tests for game', ()=>{
                 game.movePlayer1Right()
             } else {
                 game.movePlayer1Left()
+            }
+            expect(game.score[1].points).toBe(1)
+            expect(game.score[2].points).toBe(0)
+        }
+        expect(game.google.position.equal(prevGooglePosition)).toBe(false)
+
+
+    })
+    it('catch google by player for columns', async ()=>{
+
+        const game=new Game()
+        game.settings={
+            gridSize:{
+                x:1,
+                y:3
+            }
+
+        }
+        await game.start();
+        let prevGooglePosition=game.google.position.clone()
+        const deltaForPlayer1 = game.google.position.y-game.players[0].position.y
+        if (Math.abs(deltaForPlayer1)===2){
+            const deltaForPlayer2=game.google.position.y-game.players[1].position.y
+            if(deltaForPlayer2>0){
+                game.movePlayer2Down()
+            } else {
+                game.movePlayer2Up()
+            }
+            expect(game.score[2].points).toBe(1)
+            expect(game.score[1].points).toBe(0)
+
+        } else {
+            if(deltaForPlayer1>0){
+                game.movePlayer1Down()
+            } else {
+                game.movePlayer1Up()
             }
             expect(game.score[1].points).toBe(1)
             expect(game.score[2].points).toBe(0)
