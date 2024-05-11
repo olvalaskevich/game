@@ -1,5 +1,6 @@
 class Game{
         #settings={
+            pointsToWin:10,
             gridSize:{
                 x:4,
                 y:4
@@ -35,7 +36,11 @@ class Game{
             if (!settings.gridSize){
                 throw new Error('Incorrect size of grid');
             }
-                this.#settings=settings
+                this.#settings= {
+                ...this.#settings,
+                    ...settings
+                }
+                this.#settings.gridSize=settings.gridSize ? {...this.#settings.gridSize, ...settings.gridSize} : this.#settings.gridSize
     }
     get settings(){
         return this.#settings
@@ -53,14 +58,22 @@ class Game{
             this.#createPlayers();
             this.#createGoogle();
             this.#status='in-progress';
-
-            this.#clearIntervalForGoogle=setInterval(()=>{
-                this.#moveGoogleForRandomPosition();
-            }, this.#settings.googleJumpInterval)
+            this.#runGoogleJumpInterval()
         }
+    }
+    #runGoogleJumpInterval(){
+        this.#clearIntervalForGoogle=setInterval(()=>{
+            this.#moveGoogleForRandomPosition();
+        }, this.#settings.googleJumpInterval)
     }
     async stop(){
             clearInterval(this.#clearIntervalForGoogle)
+            this.#status='stopped'
+    }
+
+    async #finishGame() {
+        clearInterval(this.#clearIntervalForGoogle);
+        this.#status = 'finished'
     }
     #moveGoogleForRandomPosition(excludeGoogle=false){
             let noCrossedPositions=[
@@ -110,7 +123,14 @@ class Game{
     #checkGoogleCatching(player) {
         if (player.position.equal(this.#google.position)) {
             this.#score[player.number].points++
-            this.#moveGoogleForRandomPosition()
+            if (this.#score[player.number].points===this.#settings.pointsToWin){
+                this.#finishGame()
+            } else {
+                clearInterval(this.#clearIntervalForGoogle);
+                this.#moveGoogleForRandomPosition();
+                this.#runGoogleJumpInterval()
+            }
+
         }
     }
     #movePlayer(player, otherPlayer, delta){
