@@ -4,7 +4,7 @@ class Game{
                 x:4,
                 y:4
             },
-            googleJumpInterval:2000
+            googleJumpInterval:1000
         };
         #status='pending';
         #score={
@@ -14,6 +14,7 @@ class Game{
         #player1;
         #player2;
         #google;
+        #clearIntervalForGoogle;
 
         constructor(){
 
@@ -53,13 +54,24 @@ class Game{
             this.#createGoogle();
             this.#status='in-progress';
 
-            setInterval(()=>{
+            this.#clearIntervalForGoogle=setInterval(()=>{
                 this.#moveGoogleForRandomPosition();
             }, this.#settings.googleJumpInterval)
         }
     }
-    #moveGoogleForRandomPosition(){
-        this.#google.position=this.#getRandomPosition([this.#player1.position, this.#player2.position])
+    async stop(){
+            clearInterval(this.#clearIntervalForGoogle)
+    }
+    #moveGoogleForRandomPosition(excludeGoogle=false){
+            let noCrossedPositions=[
+                this.#player1.position,
+                this.#player2.position
+            ];
+            if (!excludeGoogle){
+                noCrossedPositions.push(this.google.position)
+            }
+
+        this.#google.position=this.#getRandomPosition(noCrossedPositions)
     }
     get players(){
             return [this.#player1, this.#player2]
