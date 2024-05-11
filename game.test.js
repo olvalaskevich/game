@@ -170,6 +170,48 @@ describe('tests for game', ()=>{
 
 
     })
+    it('one of players should be win', async ()=>{
+
+        game.settings={
+            pointsToWin:3,
+            gridSize:{
+                x:3,
+                y:1
+            }
+        }
+        await game.start();
+        const deltaForPlayer1 = game.google.position.x-game.players[0].position.x
+        if (Math.abs(deltaForPlayer1)===2){
+            const deltaForPlayer2=game.google.position.x-game.players[1].position.x
+            if(deltaForPlayer2>0){
+                game.movePlayer2Right()
+                game.movePlayer2Left()
+                game.movePlayer2Right()
+            } else {
+                game.movePlayer2Left()
+                game.movePlayer2Right()
+                game.movePlayer2Left()
+            }
+            expect(game.score[2].points).toBe(3)
+            expect(game.score[1].points).toBe(0)
+            expect(game.status).toBe('finished')
+
+        } else {
+            if(deltaForPlayer1>0){
+                game.movePlayer1Right()
+                game.movePlayer1Left()
+                game.movePlayer1Right()
+            } else {
+                game.movePlayer1Left()
+                game.movePlayer1Right()
+                game.movePlayer1Left()
+            }
+            expect(game.score[1].points).toBe(3)
+            expect(game.score[2].points).toBe(0)
+            expect(game.status).toBe('finished')
+        }
+
+    })
 })
 
 async function sleep(t){
