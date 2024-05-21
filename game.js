@@ -1,4 +1,4 @@
-class Game{
+export class Game{
         #settings={
             pointsToWin:10,
             gridSize:{
